@@ -12,11 +12,13 @@ library(tidyr)
 library(leaflet)
 library(osrm)
 
+
 # OSRM SERVER ---------------------------------------------------------------------------------
 # I have a server running locally.
 options(osrm.server = "http://127.0.0.1:5000/")
 options(osrm.profile = "foot")
-getOption("osrm.profile")
+
+
 # DATA ----------------------------------------------------------------------------------------
 load("data/clinics_coords.Rda")
 
@@ -30,7 +32,6 @@ clinics_coords <- clinics_coords_ggmap %>%
   identity()
 
 # Function to generate isochrones
-
 generate_iso <- function(df, walking_min = 10, res = 20) {
 
   # Generate first isochrone
@@ -40,7 +41,6 @@ generate_iso <- function(df, walking_min = 10, res = 20) {
 
   # Loop through the rest and bind together
   for (i in 2:nrow(df)) {
-
     isochrone <- osrmIsochrone(loc = c(df$lon[i], df$lat[i]),
                               breaks = seq(from = 0, to = walking_min, by = walking_min),
                               res = res)
