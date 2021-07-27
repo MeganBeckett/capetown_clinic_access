@@ -22,34 +22,57 @@ load("data/clinics_coords.Rda")
 
 
 # GENERATE ISOCHRONES -------------------------------------------------------------------------
-# Walking distance of 10 minutes
 ?osrmIsochrone
+
+# Slice dataframe if needed for testing
 clinics_coords <- clinics_coords_ggmap %>%
   # slice(1:5) %>%
   identity()
 
-isochrones_all <- osrmIsochrone(loc = c(clinics_coords$lon[1], clinics_coords$lat[1]),
-                                breaks = seq(from = 0, to = 10, by = 10),
-                                res = 20)
+# Function to generate isochrones
 
-for (i in 2:nrow(clinics_coords)) {
+generate_iso <- function(df, walking_min = 10, res = 20) {
 
-  iso_data <- osrmIsochrone(loc = c(clinics_coords$lon[i], clinics_coords$lat[i]),
-                            breaks = seq(from = 0, to = 10, by = 10),
-                            res = 20)
+  # Generate first isochrone
+  isochrones_all <- osrmIsochrone(loc = c(df$lon[1], df$lat[1]),
+                                  breaks = seq(from = 0, to = walking_min, by = walking_min),
+                                  res = res)
 
-  isochrones_all <- rbind(isochrones_all, iso_data)
+  # Loop through the rest and bind together
+  for (i in 2:nrow(df)) {
+
+    isochrone <- osrmIsochrone(loc = c(df$lon[i], df$lat[i]),
+                              breaks = seq(from = 0, to = walking_min, by = walking_min),
+                              res = res)
+
+    isochrones_all <- rbind(isochrones_all, isochrone)
+  }
+
+  isochrones_all
 }
+
+# Generate isochrone data at 10, 30 and 60 min walking time intervals
+isochrones_10 <- generate_iso(clinics_coords)
+
+isochrones_20 <- generate_iso(clinics_coords, walking_min = 20)
+
+isochrones_30 <- generate_iso(clinics_coords, walking_min = 30)
+
+isochrones_60 <- generate_iso(clinics_coords, walking_min = 60)
 
 
 # MAP WITH LEAFLET ----------------------------------------------------------------------------
-
-leaflet(data = isochrones_all) %>%
-  # setView(lng = 1.428678, lat = 43.598139, zoom = 13) %>%
+m <- leaflet() %>%
   addTiles() %>%
-  # addMarkers(lng = 1.428678, lat = 43.598139, popup = "My Airbnb") %>%
-  addPolygons(fillOpacity=0.3, color = "purple",
+  addPolygons(data = isochrones_20,
+              fillOpacity=0.3, color = "purple",
               weight = 1,
               opacity = 1.0,
               highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                   bringToFront = TRUE))
+                                                  bringToFront = TRUE))
+m
+
+m %>%
+  addMarkers(data = clinics_coords, ~lon, ~lat,
+             popup = ~paste0("<b>", as.character(title), "</b>", "<br>", as.character(address)),
+             label = ~as.character(title))
