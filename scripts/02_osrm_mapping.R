@@ -52,19 +52,26 @@ generate_iso <- function(df, walking_min = 10, res = 20) {
 }
 
 # Generate isochrone data at 10, 30 and 60 min walking time intervals
-isochrones_10 <- generate_iso(clinics_coords)
+if (file.exists("data/clinics_isochrones.Rda")) {
+  load("data/clinics_isochrones.Rda")
 
-isochrones_20 <- generate_iso(clinics_coords, walking_min = 20)
+} else {
+  isochrones_10 <- generate_iso(clinics_coords)
 
-isochrones_30 <- generate_iso(clinics_coords, walking_min = 30)
+  isochrones_20 <- generate_iso(clinics_coords, walking_min = 20)
 
-isochrones_60 <- generate_iso(clinics_coords, walking_min = 60)
+  isochrones_30 <- generate_iso(clinics_coords, walking_min = 30)
 
+  isochrones_60 <- generate_iso(clinics_coords, walking_min = 60)
+
+  save(isochrones_10, isochrones_20, isochrones_30, isochrones_60, file = "data/clinics_isochrones.Rda")
+
+}
 
 # MAP WITH LEAFLET ----------------------------------------------------------------------------
 m <- leaflet() %>%
   addTiles() %>%
-  addPolygons(data = isochrones_20,
+  addPolygons(data = isochrones_10,
               fillOpacity=0.3, color = "purple",
               weight = 1,
               opacity = 1.0,
@@ -72,6 +79,7 @@ m <- leaflet() %>%
                                                   bringToFront = TRUE))
 m
 
+# Add markers for clinics and pop up with name and address
 m %>%
   addMarkers(data = clinics_coords, ~lon, ~lat,
              popup = ~paste0("<b>", as.character(title), "</b>", "<br>", as.character(address)),
