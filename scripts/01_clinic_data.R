@@ -8,7 +8,7 @@
 
 # LIBRARIES -----------------------------------------------------------------------------------
 library(dplyr)
-library(stringr)
+# library(stringr)
 library(tidyr)
 library(tidygeocoder)
 library(ggmap)
@@ -50,7 +50,7 @@ clinics <- bind_rows(clinics_1, clinics_2, clinics_3) %>%
 # GEOCODING -----------------------------------------------------------------------------------
 # Using {tidygeocoder} ------------------------------------------------------------------------
 clinics_coords_tidy <- clinics %>%
-  geocode(address)
+  tidygeocoder::geocode(address)
 
 # Lots of missing locations
 clinics_missing_tidy <- clinics_coords %>%
@@ -67,7 +67,7 @@ if (file.exists("data/clinics_coords.Rda")) {
 
 } else {
   clinics_coords_ggmap <- clinics %>%
-    mutate_geocode(address)
+    ggmap::mutate_geocode(address)
 
   save(clinics_coords_ggmap, file = "data/clinics_coords.Rda")
 
