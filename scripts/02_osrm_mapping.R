@@ -8,7 +8,6 @@
 
 # LIBRARIES -----------------------------------------------------------------------------------
 library(dplyr)
-library(tidyr)
 library(leaflet)
 library(osrm)
 
