@@ -17,6 +17,10 @@ Especially in our current times with the COVID 19 pandemic, vaccine roll outs as
 
 Analyses like this can not only help to investigate the current situation but also help with future city planning, for example finding the optimal location for a new clinic based on areas that do not have good accessibility at the moment.
 
+## Recording available from afrimapr
+
+I presented this analysis with an explanation and demo of the code at the July 2021 [afrimapr](https://afrimapr.github.io/afrimapr.website/) community meetup. A recording of the tutorial is available [here](https://www.youtube.com/watch?v=f_UoPrsmSQg) on Youtube. We only realised and started the recording a little way in, hence the abrupt start! 
+
 ## OSRM setup and processing
 
 You can install OSRM on a Linux environment, as outlined [here](https://datawookie.dev/blog/2017/09/building-a-local-osrm-instance/), or use the Docker image, as shown here and described in more detail [here](https://github.com/Project-OSRM/osrm-backend#using-docker).
